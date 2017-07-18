@@ -7,11 +7,11 @@ provider "aws" {
 }
 
 resource "aws_instance" "terraform_first_server" {
-  ami = "ami-40d28157"
+  ami = "ami-82be18ed"
   instance_type = "t2.micro"
 
   tags {
-    Name = "terraform_ubuntu_16-04"
+    Name = "terraform_amazon_linux"
     CostCenter = "None"
   }
 }
