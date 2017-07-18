@@ -12,7 +12,7 @@ resource "aws_instance" "terraform_first_server" {
 
   user_data = <<-EOF
               #!/bin/bash
-              echo "This is Terraformed AMI ami-82be18ed (Amzn Linux 2017.03.1) > index.html
+              echo "This is Terraformed AMI ami-82be18ed (Amzn Linux 2017.03.1)" > index.html
               nohup busybox httpd -f -p 8080 &
               EOF
 
