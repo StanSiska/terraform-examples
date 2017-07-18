@@ -9,9 +9,9 @@ provider "aws" {
 resource "aws_instance" "terraform_first_server" {
   ami = "ami-40d28157"
   instance_type = "t2.micro"
-}
 
-tags {
-  Name = "terraform_ubuntu_16-04"
-  CostCenter = "None"
+  tags {
+    Name = "terraform_ubuntu_16-04"
+    CostCenter = "None"
+  }
 }
