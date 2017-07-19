@@ -37,11 +37,9 @@ resource "aws_instance" "terraform_first_server" {
   user_data = <<-EOF
               #!/bin/bash
               sudo yum -y install httpd git
-              echo "This is Terraformed AMI ami-82be18ed (Amzn Linux 2017.03.1)" > /var/www/html/index.html
-
-              chkconfig httpd on
-              service httpd start
-
+              sudo echo "This is Terraformed AMI ami-82be18ed (Amzn Linux 2017.03.1)" > /var/www/html/index.html
+              sudo chkconfig httpd on
+              sudo service httpd start
               EOF
 
   tags {
