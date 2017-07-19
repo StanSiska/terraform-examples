@@ -16,6 +16,7 @@ provider "aws" {
 
 variable "server_port" {
   description = "The port for Apache HTTP Server"
+  default = 8080
 }
 
 resource "aws_security_group" "instance" {
