@@ -14,9 +14,16 @@ provider "aws" {
   region = "eu-central-1"
 }
 
+# Define server_port as variable, used later in configuration (DRY - Dont Repeat Yourself)
 variable "server_port" {
   description = "The port for Apache HTTP Server"
   default = 8080
+}
+
+# Displays public_ip value after APPLY command
+# or use cmd: terraform output <OUTPUT_NAME>
+output "publicip" {
+  value = "${aws_instance.terraform_first_server.public_ip}"
 }
 
 resource "aws_security_group" "instance" {
