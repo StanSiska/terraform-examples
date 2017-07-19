@@ -17,7 +17,7 @@ provider "aws" {
 # Define server_port as variable, used later in configuration (DRY - Dont Repeat Yourself)
 variable "server_port" {
   description = "The port for Apache HTTP Server"
-  default = 8080
+  default = 80
 }
 
 # Displays public_ip value after APPLY command
@@ -40,6 +40,7 @@ resource "aws_instance" "terraform_first_server" {
   ami = "ami-82be18ed"
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${aws_security_group.instance.id}"]
+  iam_instance_profile = "or562-role"
 
   user_data = <<-EOF
               #!/bin/bash
