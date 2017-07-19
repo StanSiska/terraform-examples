@@ -22,7 +22,7 @@ variable "server_port" {
 
 # Displays public_ip value after APPLY command
 # or use cmd: terraform output <OUTPUT_NAME>
-output "publicip" {
+output "public_ip" {
   value = "${aws_instance.terraform_first_server.public_ip}"
 }
 
@@ -40,7 +40,6 @@ resource "aws_instance" "terraform_first_server" {
   ami = "ami-82be18ed"
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${aws_security_group.instance.id}"]
-  iam_instance_profile = "or562-role"
 
   user_data = <<-EOF
               #!/bin/bash
