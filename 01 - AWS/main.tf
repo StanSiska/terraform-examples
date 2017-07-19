@@ -14,6 +14,10 @@ provider "aws" {
   region = "eu-central-1"
 }
 
+variable "server_port" {
+  description = "The port for Apache HTTP Server"
+}
+
 resource "aws_security_group" "instance" {
   name = "terraform-secgroup-instance"
   ingress {
@@ -31,7 +35,7 @@ resource "aws_instance" "terraform_first_server" {
 
   user_data = <<-EOF
               #!/bin/bash
-              yum -y install httpd git
+              sudo yum -y install httpd git
               echo "This is Terraformed AMI ami-82be18ed (Amzn Linux 2017.03.1)" > /var/www/html/index.html
 
               chkconfig httpd on
