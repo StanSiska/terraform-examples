@@ -2,9 +2,6 @@ provider "aws" {
   region = "eu-central-1"
 }
 
-# Statement fetching available AWS AZs every time Teraform is started
-data "aws_availability_zones" "all" {}
-
 # Define server_port as variable, used later in configuration (DRY - Dont Repeat Yourself)
 variable "server_port" {
   description = "The port for Apache HTTP Server"
@@ -17,6 +14,8 @@ output "elb_dns_name" {
   value = "${aws_elb.terraform-elb-1.dns_name}"
 }
 
+# Statement fetching available AWS AZs every time Teraform is started
+data "aws_availability_zones" "all" {}
 
 # Lifecycle meta-parameter exists for all ASG (autoscaling group) resources
 resource "aws_security_group" "terraform_secgroup_instance" {
@@ -56,7 +55,7 @@ resource "aws_security_group" "terraform_elb_instance" {
 # Elastic Load Balancer configuration
 resource "aws_elb" "terraform-elb-1" {
   name = "terraform-elb-example"
-  availability_zones = ["${data.aws_availability_zones.all}"]
+  availability_zones = ["${data.aws_availability_zones.all.names}"]
   security_groups = ["${aws_security_group.terraform_elb_instance.id}"]
 
   # Define ELB listening port and routing port & protocol
