@@ -1,7 +1,7 @@
 # Terraform 
 ## Basics
-Masterless tool for deploying infrastructure. 
-Terraform code is written in the HashiCorp's Configuration Language (HCL) with extension .tf
+Masterless tool for deploying infrastructure. <br>
+Terraform code is written in the HashiCorp's Configuration Language (HCL) with extension .tf although handles also JSON configurations with extension .tf.json. 
 
 ## Commands
 ```

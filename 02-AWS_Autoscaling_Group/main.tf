@@ -2,38 +2,88 @@ provider "aws" {
   region = "eu-central-1"
 }
 
+# Statement fetching available AWS AZs every time Teraform is started
+data "aws_availability_zones" "all" {}
+
 # Define server_port as variable, used later in configuration (DRY - Dont Repeat Yourself)
 variable "server_port" {
   description = "The port for Apache HTTP Server"
-  default = 80
+  default = 8080
 }
 
 # Displays public_ip value after APPLY command
 # or use cmd: terraform output <OUTPUT_NAME>
-# output "public_ip" {
-#   value = "${aws_instance.terraform_first_server.public_ip}"
-# }
+output "elb_dns_name" {
+  value = "${aws_elb.terraform-elb-1.dns_name}"
+}
+
 
 # Lifecycle meta-parameter exists for all ASG (autoscaling group) resources
 resource "aws_security_group" "terraform_secgroup_instance" {
   name = "terraform-secgroup-instance"
+
   ingress {
     from_port   = "${var.server_port}"
     to_port     = "${var.server_port}"
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   lifecycle {
     create_before_destroy = true
   }
 }
 
-# Statement defining which AWS AZs are available
-data "aws_availability_zones" "all" {}
+# Security group allowing traffic throught port 80 for ELB traffic routing
+resource "aws_security_group" "terraform_elb_instance" {
+  name = "terraform-elb-instance"
 
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port = 80
+    to_port   = 80
+    protocol  = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Elastic Load Balancer configuration
+resource "aws_elb" "terraform-elb-1" {
+  name = "terraform-elb-example"
+  availability_zones = ["${data.aws_availability_zones.all}"]
+  security_groups = ["${aws_security_group.terraform_elb_instance.id}"]
+
+  # Define ELB listening port and routing port & protocol
+  listener {
+    lb_port           = 80
+    lb_protocol       = "http"
+    instance_port     = "${var.server_port}"
+    instance_protocol = "http"
+  }
+
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    interval            = 30
+    target              = "HTTP:${var.server_port}//"
+  }
+}
+
+# Autoscaling group must contain AZ statement
 resource "aws_autoscaling_group" "terraform_autoscaling_grp" {
   launch_configuration = "${aws_launch_configuration.terraform_launch_config.id}"
   availability_zones = ["${data.aws_availability_zones.all.names}"]
+
+  load_balancers = ["${aws_elb.terraform-elb-1.name}"]
+  health_check_type = "ELB"
+
   max_size = 1
   min_size = 2
 
@@ -47,7 +97,6 @@ resource "aws_autoscaling_group" "terraform_autoscaling_grp" {
 resource "aws_launch_configuration" "terraform_launch_config" {
   image_id = "ami-82be18ed"
   instance_type = "t2.micro"
-  vpc_security_group_ids = ["${aws_security_group.terraform_secgroup_instance.id}"]
 
   user_data = <<-EOF
               #!/bin/bash
@@ -59,6 +108,7 @@ resource "aws_launch_configuration" "terraform_launch_config" {
 
   # Meta-parameter Lifecycle defining how to handle instances
   lifecycle {
+    # If set to true, must be set on depending resources (eg. secgrp) to avoid cyclical dependencies
     create_before_destroy = true
   }
 }

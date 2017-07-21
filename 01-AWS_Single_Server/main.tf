@@ -26,6 +26,7 @@ output "public_ip" {
   value = "${aws_instance.terraform_first_server.public_ip}"
 }
 
+# ingress - (Optional) Can be specified multiple times for each ingress rule.
 resource "aws_security_group" "instance" {
   name = "terraform-secgroup-instance"
   ingress {
