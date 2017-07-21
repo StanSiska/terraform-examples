@@ -18,14 +18,24 @@ terraform show   - displays current config
 
 terraform input  - Import existing infrastructure into Terraform state file, allowing to find current resources to come under Terraform management 
 terraform status - advanced options, requires further parameters
+
+terraform remote config - configures erraform Remote State Storage from S3, Azure Storage, HashiCorp's Consul etc.
 ```
 Open graph output in [GraphVizOnline](http://dreampuf.github.io/GraphvizOnline/) to visualize dependencies.
-## Configuration Examples
 
+### Remote State Storage
+It's not desirable to store Remote State Storage files on version system due to visibility of secrets (plaintex) and error prone due to manual activities (push/pull)
+Steps:
+[ ] Create an S3 bucket
+[ ] Define main.tf configuration 
+
+## Configuration Examples
 ### 01 - AWS Simple Example
 Basic definitions for provider, using variables, tags, interpolation, first look to heredoc syntax
   
 ### 02 - AWS Cluster with ELB
 Autoscaling groups, lifecycles definitions, Elastic Load Balancers, Healthchecks
+
+### 03 - Remote State Storage using AWS S3 Bucket
 
 
