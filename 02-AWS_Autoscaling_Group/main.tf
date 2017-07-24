@@ -2,18 +2,6 @@ provider "aws" {
   region = "eu-central-1"
 }
 
-# Define server_port as variable, used later in configuration (DRY - Dont Repeat Yourself)
-variable "server_port" {
-  description = "The port for Apache HTTP Server"
-  default = 8080
-}
-
-# Displays public_ip value after APPLY command
-# or use cmd: terraform output <OUTPUT_NAME>
-output "elb_dns_name" {
-  value = "${aws_elb.terraform-elb-1.dns_name}"
-}
-
 # Statement fetching available AWS AZs every time Teraform is started
 data "aws_availability_zones" "all" {}
 
