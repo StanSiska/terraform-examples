@@ -54,8 +54,8 @@ data "template_file" "user_data" {
 
   vars {
     server_port = "${var.server_port}"
-    db_address  = "${data.template_file.user_data.db.address}"
-    db_port     = "${data.template_file.user_data.db.port}"
+    db_address  = "${data.template_file.user_data.db_address}"
+    db_port     = "${data.template_file.user_data.db_port}"
   }
 }
 
@@ -82,6 +82,18 @@ resource "aws_elb" "terraform-elb-1" {
   }
 }
 
+
+resource "aws_launch_configuration" "terraform_launch_config" {
+  image_id          = "ami-82be18ed"
+  instance_type     = "t2.micro"
+  security_groups   = ["${aws_security_group.terraform_secgroup_instance.id}"]
+  user_data         = "${data.template_file.user_data.rendered}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 # Autoscaling group must contain AZ statement
 resource "aws_autoscaling_group" "terraform_autoscaling_grp" {
   launch_configuration = "${aws_launch_configuration.terraform_launch_config.id}"
@@ -97,16 +109,5 @@ resource "aws_autoscaling_group" "terraform_autoscaling_grp" {
     key = "Name"
     value = "terraform-asg-1"
     propagate_at_launch = true
-  }
-}
-
-resource "aws_launch_configuration" "example" {
-  image_id          = "ami-82be18ed"
-  instance_type     = "t2.micro"
-  security_groups   = ["${aws_security_group.instance.id}"]
-  user_data         = "${data.template_file.user_data.rendered}"
-
-  lifecycle {
-    create_before_destroy = true
   }
 }
