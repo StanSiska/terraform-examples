@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-central-1"
+  region = "us-east-1"
 }
 
 data "aws_availability_zones" "all" {}
@@ -101,10 +101,10 @@ resource "aws_autoscaling_group" "terraform_autoscaling_grp" {
 }
 
 resource "aws_launch_configuration" "example" {
-  image_id = "ami-82be18ed"
-  instance_type = "t2.micro"
-  security_groups = ["${aws_security_group.instance.id}"]
-  user_data = "${data.template_file.user_data.rendered}"
+  image_id          = "ami-82be18ed"
+  instance_type     = "t2.micro"
+  security_groups   = ["${aws_security_group.instance.id}"]
+  user_data         = "${data.template_file.user_data.rendered}"
 
   lifecycle {
     create_before_destroy = true
