@@ -2,6 +2,12 @@ provider "aws" {
   region = "eu-central-1"
 }
 
+# Define server_port as variable, used later in configuration (DRY - Dont Repeat Yourself)
+variable "server_port" {
+  description = "The port for Apache HTTP Server"
+  default = 80
+}
+
 # Statement fetching available AWS AZs every time Teraform is started
 data "aws_availability_zones" "all" {}
 
